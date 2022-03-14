@@ -1,12 +1,17 @@
 package com.sistema.blog.services;
 
+
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.sistema.blog.dto.PublicationDTO;
+import com.sistema.blog.dto.PublicationResponse;
 import com.sistema.blog.entities.Publication;
 import com.sistema.blog.exceptions.ResourceNotFoundException;
 import com.sistema.blog.repositories.PublicationRepositorie;
@@ -51,10 +56,26 @@ public class PublicationServiceImplementation implements PublicationService {
 	}
 
 	@Override
-	public List<PublicationDTO> getAllPublications() {
+	public PublicationResponse getAllPublications(int pageNumber, int pageSize) {
+		
+		Pageable pageable = PageRequest.of(pageNumber, pageSize);
+		
+		Page<Publication> publications = publicationRepositorie.findAll(pageable);
+		
 		// TODO Auto-generated method stub
-		List<Publication> publications = publicationRepositorie.findAll();
-		return publications.stream().map(publication -> mapearDTO(publication)).collect(Collectors.toList());		
+		List<Publication> publicationsList = publications.getContent();
+		
+		List<PublicationDTO> content = publicationsList.stream().map(publication -> mapearDTO(publication)).collect(Collectors.toList());
+		
+		PublicationResponse publicationResponse = new PublicationResponse();
+		publicationResponse.setContent(content);
+		publicationResponse.setPageNumber(publications.getNumber());
+		publicationResponse.setPageSize(publications.getSize());
+		publicationResponse.setTotalElements(publications.getTotalElements());
+		publicationResponse.setTotalPages(publications.getTotalPages());
+		publicationResponse.setLast(publications.isLast());
+		
+		return publicationResponse;
 	}
 	
 	// Convertir entidad a DTO
