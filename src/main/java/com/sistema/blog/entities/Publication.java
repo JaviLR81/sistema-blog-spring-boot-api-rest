@@ -26,6 +26,12 @@ public class Publication {
 	private String description;
 	@Column(name = "content", nullable = false)
 	private String content;
+	
+	// Añadiendo un conjunto de comentarios
+    // Definiendo la relación uno a muchos para eliminar en cascada
+	// mappedBy = mismo atributo de la otra clase de entidad
+    @OneToMany(mappedBy = "publication",cascade = CascadeType.ALL,orphanRemoval = true)
+    private Set<Comment> comments = new HashSet<>();
 
 	public Publication() {
 		super();
@@ -39,10 +45,6 @@ public class Publication {
 		this.content = content;
 	}
 	
-    // Definiendo la relación para eliminar en cascada
-    @OneToMany(mappedBy = "publication",cascade = CascadeType.ALL,orphanRemoval = true)
-    private Set<Comment> comments = new HashSet<>();
-
 	public Long getId() {
 		return id;
 	}

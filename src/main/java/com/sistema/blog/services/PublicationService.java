@@ -7,8 +7,11 @@ public interface PublicationService {
 	
 	public PublicationDTO createPublication(PublicationDTO publicationDTO);
 	
-	public PublicationResponse getAllPublications(int pageNumber, int pageSize);
+	// 1° Implementacion
+	// public List<PublicationDTO> getAllPublications(int pageNumber, int pageSize);
 	
+	public PublicationResponse getAllPublications(int pageNumber, int pageSize,String sortBy, String sortDirection);
+		
 	public PublicationDTO getPublicationByID(long id);
 	
 	public PublicationDTO updatePublication(PublicationDTO publicationDTO, long id);

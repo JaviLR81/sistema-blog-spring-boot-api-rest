@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.sistema.blog.dto.PublicationDTO;
@@ -46,19 +47,30 @@ public class PublicationServiceImplementation implements PublicationService {
 		
 		return publicationResponse; */
 		
+		// Tomamos la data de JSON
 		Publication publication = mapearEntidad(publicationDTO);
+		// Creamos el objeto en la BD
 		Publication newPublication = publicationRepositorie.save(publication);
-		
+		// Retornamos la data en formato JSON
 		PublicationDTO publicationResponse = mapearDTO(newPublication);
 		
-		return publicationResponse;
-				
+		return publicationResponse;				
 	}
 
 	@Override
-	public PublicationResponse getAllPublications(int pageNumber, int pageSize) {
+	public PublicationResponse getAllPublications(int pageNumber, int pageSize,String sortBy,String sortDirection) {
 		
-		Pageable pageable = PageRequest.of(pageNumber, pageSize);
+		// 1° Implementación
+		// public List<PublicationDTO>
+		// List<Publication> publications = publicationRepositorie.findAll();
+		// return publications.stream().map(publication -> mapearDTO(publication)).collect(Collectors.toList());
+		
+		Sort sort = sortDirection.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+		
+		// Se puede hacer directo sin necesidad del objeto de arriba si no nos importa el asc o desc
+		// Pageable pageable = PageRequest.of(pageNumber, pageSize,Sort.by(sortBy));
+		Pageable pageable = PageRequest.of(pageNumber, pageSize,sort);
+		
 		
 		Page<Publication> publications = publicationRepositorie.findAll(pageable);
 		
@@ -67,6 +79,7 @@ public class PublicationServiceImplementation implements PublicationService {
 		
 		List<PublicationDTO> content = publicationsList.stream().map(publication -> mapearDTO(publication)).collect(Collectors.toList());
 		
+		// Usando una clase personalizada para responder en la API
 		PublicationResponse publicationResponse = new PublicationResponse();
 		publicationResponse.setContent(content);
 		publicationResponse.setPageNumber(publications.getNumber());
@@ -104,7 +117,10 @@ public class PublicationServiceImplementation implements PublicationService {
 	@Override
 	public PublicationDTO getPublicationByID(long id) {
 		Publication publication = publicationRepositorie
-								.findById(id).orElseThrow(() -> new ResourceNotFoundException("Publicación", "id", id) );
+								.findById(id)
+								.orElseThrow(
+									() -> 
+									new ResourceNotFoundException("Publicacion", "id", id));
 		return mapearDTO(publication);		
 	}
 
@@ -112,7 +128,8 @@ public class PublicationServiceImplementation implements PublicationService {
 	public PublicationDTO updatePublication(PublicationDTO publicationDTO, long id) {
 		// TODO Auto-generated method stub
 		Publication publication = publicationRepositorie
-				.findById(id).orElseThrow(() -> new ResourceNotFoundException("Publicación", "id", id) );
+				.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Publicación", "id", id) );
 		
 		publication.setTitle(publicationDTO.getTitle());
 		publication.setDescription(publicationDTO.getDescription());

@@ -18,13 +18,12 @@ import com.sistema.blog.repositories.PublicationRepositorie;
 @Service
 public class CommentServiceImplementation implements CommentService {
 
-	
+		// Inyectando los dos repositorios involucrados
 	 	@Autowired
 	    private CommentRepositorie commentRepositorie;
 
 	    @Autowired
 	    private PublicationRepositorie publicationRepositorie;
-
 
 	    @Override
 	    public CommentDTO createComment(long publicationId, CommentDTO commentDTO) {
@@ -32,26 +31,25 @@ public class CommentServiceImplementation implements CommentService {
 	        Comment comment = mapearEntidad(commentDTO);
 
 	        Publication publication = publicationRepositorie
-	        .findById(publicationId).orElseThrow(() -> new ResourceNotFoundException("Publicación", "id", publicationId) );
+	        .findById(publicationId).orElseThrow(() -> new ResourceNotFoundException("Publicacion", "id", publicationId) );
 
 	        comment.setPublication(publication);
 	        Comment newComment = commentRepositorie.save(comment);
 	        return mapearDTO(newComment);        
 	    }
 
-	    private CommentDTO mapearDTO(Comment comment) {
-			// CommentDTO comentarioDTO = modelMapper.map(comentario, CommentDTO.class);
+	    private CommentDTO mapearDTO(Comment comment) {			
 			CommentDTO commentDTO = new CommentDTO();
 	        commentDTO.setId(comment.getId());
 	        commentDTO.setName(comment.getName());
 	        commentDTO.setEmail(comment.getEmail());
 	        commentDTO.setBody(comment.getBody());
-
 			return commentDTO;
 		}
 		
 		private Comment mapearEntidad(CommentDTO comementDTO) {
 			Comment comment = new Comment();
+			// TODO Revisar si necesitemos el id o no
 	        comment.setId(comementDTO.getId());
 	        comment.setName(comementDTO.getName());
 	        comment.setEmail(comementDTO.getEmail());
@@ -60,17 +58,13 @@ public class CommentServiceImplementation implements CommentService {
 		}
 
 		@Override
-		public List<CommentDTO> getCommentsByPublicationId(long publicationId) {
-			// TODO Auto-generated method stub
-			
-			List<Comment> comments = commentRepositorie.findByPublicationId(publicationId);
-			
+		public List<CommentDTO> getCommentsByPublicationId(long publicationId) {			
+			List<Comment> comments = commentRepositorie.findByPublicationId(publicationId);			
 			return comments.stream().map(comment -> mapearDTO(comment)).collect(Collectors.toList());
 		}
 
 		@Override
 		public CommentDTO getCommentById(Long publicationId, Long commentId) {
-			// TODO Auto-generated method stub
 			
 			Publication publication = publicationRepositorie
 			        .findById(publicationId).orElseThrow(() -> new ResourceNotFoundException("Publicacion", "id", publicationId) );
@@ -89,7 +83,6 @@ public class CommentServiceImplementation implements CommentService {
 
 		@Override
 		public CommentDTO updateComment(Long publicationId,Long commentId,CommentDTO commentRequest) {
-			// TODO Auto-generated method stub
 			
 			Publication publication = publicationRepositorie
 			        .findById(publicationId).orElseThrow(() -> new ResourceNotFoundException("Publicacion", "id", publicationId) );
