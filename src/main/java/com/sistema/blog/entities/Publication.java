@@ -13,6 +13,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 @Entity
 @Table(name = "publications", uniqueConstraints = { @UniqueConstraint(columnNames = { "title" }) })
 public class Publication {
@@ -30,6 +32,7 @@ public class Publication {
 	// Añadiendo un conjunto de comentarios
     // Definiendo la relación uno a muchos para eliminar en cascada
 	// mappedBy = mismo atributo de la otra clase de entidad
+	@JsonBackReference
     @OneToMany(mappedBy = "publication",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<Comment> comments = new HashSet<>();
 
@@ -51,6 +54,14 @@ public class Publication {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public Set<Comment> getComments() {
+		return comments;
+	}
+
+	public void setComments(Set<Comment> comments) {
+		this.comments = comments;
 	}
 
 	public String getTitle() {
