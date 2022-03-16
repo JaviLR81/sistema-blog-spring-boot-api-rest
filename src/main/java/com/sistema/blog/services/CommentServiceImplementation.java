@@ -3,6 +3,7 @@ package com.sistema.blog.services;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,9 @@ import com.sistema.blog.repositories.PublicationRepositorie;
 @Service
 public class CommentServiceImplementation implements CommentService {
 
+		@Autowired
+		private ModelMapper modelMapper;
+	
 		// Inyectando los dos repositorios involucrados
 	 	@Autowired
 	    private CommentRepositorie commentRepositorie;
@@ -37,25 +41,6 @@ public class CommentServiceImplementation implements CommentService {
 	        Comment newComment = commentRepositorie.save(comment);
 	        return mapearDTO(newComment);        
 	    }
-
-	    private CommentDTO mapearDTO(Comment comment) {			
-			CommentDTO commentDTO = new CommentDTO();
-	        commentDTO.setId(comment.getId());
-	        commentDTO.setName(comment.getName());
-	        commentDTO.setEmail(comment.getEmail());
-	        commentDTO.setBody(comment.getBody());
-			return commentDTO;
-		}
-		
-		private Comment mapearEntidad(CommentDTO comementDTO) {
-			Comment comment = new Comment();
-			// TODO Revisar si necesitemos el id o no
-	        comment.setId(comementDTO.getId());
-	        comment.setName(comementDTO.getName());
-	        comment.setEmail(comementDTO.getEmail());
-	        comment.setBody(comementDTO.getBody());
-			return comment;
-		}
 
 		@Override
 		public List<CommentDTO> getCommentsByPublicationId(long publicationId) {			
@@ -121,5 +106,15 @@ public class CommentServiceImplementation implements CommentService {
 			}
 			
 			commentRepositorie.delete(comment);			
+		}
+		
+		private CommentDTO mapearDTO(Comment comment) {			
+			CommentDTO commentDTO =  modelMapper.map(comment, CommentDTO.class);
+			return commentDTO;
+		}
+		
+		private Comment mapearEntidad(CommentDTO comementDTO) {
+			Comment comment = modelMapper.map(comementDTO, Comment.class);
+			return comment;
 		}
 }
