@@ -1,10 +1,20 @@
 package com.sistema.blog.dto;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
+
 public class CommentDTO {
 
 	private long id;
+	@NotEmpty(message = "The name should not be empty")
 	private String name;
+	@NotEmpty(message = "The email should not be empty")
+	@Email
 	private String email;
+	
+	@NotEmpty
+	@Size(min = 10,message="The comment body should be at least 10 characters")
 	private String body;
 
 	public CommentDTO() {

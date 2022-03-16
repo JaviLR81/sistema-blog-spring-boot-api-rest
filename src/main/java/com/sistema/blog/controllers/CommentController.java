@@ -29,12 +29,12 @@ public class CommentController {
 
 
     @PostMapping("/publications/{publicationId}/comments")
-    public ResponseEntity<CommentDTO> saveComment(@PathVariable(value = "publicationId") long publicationId,@RequestBody CommentDTO commentDTO){
+    public ResponseEntity<CommentDTO> saveComment(@PathVariable(value = "publicationId") long publicationId,@Valid @RequestBody CommentDTO commentDTO){
         return new ResponseEntity<>(commentService.createComment(publicationId, commentDTO),HttpStatus.CREATED);
     }
     
     @PutMapping("/publications/{publicationId}/comments/{commentId}")
-	public ResponseEntity<CommentDTO> updateComment(@PathVariable(value = "publicationId") Long publicationId,@PathVariable(value = "commentId") Long commentId,@RequestBody CommentDTO comentarioDTO){
+	public ResponseEntity<CommentDTO> updateComment(@PathVariable(value = "publicationId") Long publicationId,@PathVariable(value = "commentId") Long commentId,@Valid @RequestBody CommentDTO comentarioDTO){
 		CommentDTO comentarioActualizado = commentService.updateComment(publicationId, commentId, comentarioDTO);
 		return new ResponseEntity<>(comentarioActualizado,HttpStatus.OK);
 	}
