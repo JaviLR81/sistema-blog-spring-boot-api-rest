@@ -5,6 +5,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -44,12 +45,14 @@ public class PublicationController {
 	public ResponseEntity<PublicationDTO> getPublicationByID(@PathVariable(name = "id") long id) {
 		return ResponseEntity.ok(publicationService.getPublicationByID(id));
 	}
-
+	
+	@PreAuthorize("hasRole('ADMIN')")
 	@PostMapping
 	public ResponseEntity<PublicationDTO> savePublication(@Valid @RequestBody PublicationDTO publicationDTO) {
 		return new ResponseEntity<>(publicationService.createPublication(publicationDTO), HttpStatus.CREATED);
 	}
-
+	
+	@PreAuthorize("hasRole('ADMIN')")
 	@PutMapping("/{id}")
 	public ResponseEntity<PublicationDTO> updatePublication(@Valid @RequestBody PublicationDTO publicationDTO,
 			@PathVariable(name = "id") long id) {
@@ -58,6 +61,7 @@ public class PublicationController {
 		return new ResponseEntity<>(publicationResponse, HttpStatus.OK);
 	}
 
+	@PreAuthorize("hasRole('ADMIN')")
 	@DeleteMapping("/{id}")
 	public ResponseEntity<String> deletePublication(@PathVariable(name = "id") long id) {
 		publicationService.deletePublication(id);
